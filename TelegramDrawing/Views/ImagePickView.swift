@@ -12,17 +12,25 @@ struct ImagePickView: View {
   
   @Binding var image: UIImage?
   @State private var selectedItems = [PhotosPickerItem]()
+  @State private var isLoading = false
   
   var body: some View {
-    PhotosPicker(selection: $selectedItems, maxSelectionCount: 1, matching: .images) {
-      Text("Choose photo")
-        .foregroundColor(.white)
-        .padding()
-        .frame(width: 300)
-        .background(Color.cyan)
-        .cornerRadius(15)
-    }.onChange(of: selectedItems) { newValue in
-      getImage(from: newValue.first)
+    ZStack {
+      PhotosPicker(selection: $selectedItems, maxSelectionCount: 1, matching: .images) {
+        Text("Choose photo")
+          .foregroundColor(.white)
+          .padding()
+          .frame(width: 300)
+          .background(Color.cyan)
+          .cornerRadius(15)
+      }.onChange(of: selectedItems) { newValue in
+        isLoading = true
+        getImage(from: newValue.first)
+      }
+      if isLoading {
+        ProgressView()
+        .scaleEffect(1.5, anchor: .center)
+      }
     }
   }
   
@@ -31,12 +39,20 @@ struct ImagePickView: View {
     item.loadTransferable(type: Data.self) { result in
       switch result {
       case .success(let data):
-        if let data = data, let image = UIImage(data: data) {
-          self.image = image
+        DispatchQueue.global(qos: .userInitiated).async {
+          if let data = data, let image = UIImage(data: data) {
+            DispatchQueue.main.async {
+              self.image = image
+            }
+          }
         }
       case .failure(let error):
         print("Image error", error.localizedDescription)
-        getImage(from: item)
+        if image == nil {
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            getImage(from: item)
+          }
+        }
       }
     }
   }

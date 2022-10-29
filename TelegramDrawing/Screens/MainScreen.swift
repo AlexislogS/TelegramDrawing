@@ -21,20 +21,18 @@ struct MainScreen: View {
   @State private var image: UIImage?
   @State private var color: Color = .cyan
   @State private var showOpacitySlider = false
-  @State private var sliderProgress: CGFloat = 0
+  @State private var sliderProgress: CGFloat = 0.3
   @State private var lastDragValue: CGFloat = 0
   @State private var sliderOffset: CGFloat = 0
   @State private var selectedBrush = 0
+  @State private var isDrawing = false
   
   private let sliderMaxLineWidth: CGFloat = 20
   private let brushes = ["brush", "pen", "pencil"]
   
   var body: some View {
     if let image = image {
-      ZStack {
-        Image(uiImage: image)
-          .resizable()
-          .ignoresSafeArea(.all)
+      NavigationView {
         VStack {
           Canvas { context, size in
             for line in lines {
@@ -42,15 +40,26 @@ struct MainScreen: View {
               path.addLines(line.points)
               context.stroke(path, with: .color(line.color), lineWidth: line.lineWidth)
             }
-          }.gesture(DragGesture()
+          }
+          .background(Image(uiImage: image)
+            .resizable())
+          .gesture(DragGesture()
             .onChanged({ value in
               let newPoint = value.location
-              currentLine.points.append(newPoint)
-              lines.append(currentLine)
-            })
-              .onEnded({ value in
+              if isDrawing, var lastLine = lines.popLast() {
+                lastLine.points.append(newPoint)
+                lines.append(lastLine)
+                currentLine = lastLine
+              } else {
+                isDrawing = true
                 let lineWidth = max(sliderProgress, 0.01) * sliderMaxLineWidth
                 currentLine = Line(color: color, lineWidth: lineWidth)
+                currentLine.points.append(newPoint)
+                lines.append(currentLine)
+              }
+            })
+              .onEnded({ value in
+                isDrawing = false
               })
           )
           if showOpacitySlider {
@@ -77,8 +86,9 @@ struct MainScreen: View {
                   }
               }
             }
+            .frame(height: 60)
           } else {
-            HStack(spacing: -20) {
+            HStack(spacing: -16) {
               ColorPicker("", selection: $color)
                 .onChange(of: color) { newValue in
                   currentLine.color = newValue
@@ -98,6 +108,28 @@ struct MainScreen: View {
           }
         }
         .padding(.bottom)
+        .toolbar {
+          ToolbarItem(placement: .navigationBarLeading) {
+            Button(action: {
+              lines.removeLast()
+            }, label: {
+              Image("undo")
+                .resizable()
+                .frame(width: 24, height: 24)
+            })
+            .disabled(lines.isEmpty)
+            .opacity(lines.isEmpty ? 0.5 : 1)
+          }
+          ToolbarItem(placement: .navigationBarTrailing) {
+            Button("Clear All") {
+              lines.removeAll()
+            }
+            .disabled(lines.isEmpty)
+            .opacity(lines.isEmpty ? 0.5 : 1)
+            .foregroundColor(.white)
+          }
+        }
+        .background(Color.black)
       }
     } else {
       ImagePickView(image: $image)

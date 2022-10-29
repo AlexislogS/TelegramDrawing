@@ -25,7 +25,7 @@ struct CapsuleSliderView: View {
   @Binding var lastDragValue: CGFloat
   @Binding var sliderOffset: CGFloat
   
-  private let maxWidth: CGFloat = UIScreen.main.bounds.width * 0.7
+  private let maxSliderWidth: CGFloat = UIScreen.main.bounds.width * 0.7
 
   var body: some View {
     ZStack(alignment: .leading) {
@@ -41,22 +41,30 @@ struct CapsuleSliderView: View {
         .gesture(DragGesture()
           .onChanged({ value in
             let translation = value.translation
-            sliderOffset = translation.width + lastDragValue
-            let max = maxWidth - 24
-            sliderOffset = sliderOffset > max ? max : sliderOffset
-            sliderOffset = sliderOffset >= 0 ? sliderOffset : 0
-            let progress = sliderOffset / max
-            sliderProgress = progress <= 1 ? progress : 1
+            setOffset(translation: translation.width)
           })
             .onEnded({ value in
-              let max = maxWidth - 24
+              let max = maxSliderWidth - 24
               sliderOffset = sliderOffset > max ? max : sliderOffset
               sliderOffset = sliderOffset >= 0 ? sliderOffset : 0
               lastDragValue = sliderOffset
             }))
+        .onAppear {
+          setOffset(translation: maxSliderWidth * 0.3)
+          lastDragValue = sliderOffset
+        }
     }
-    .frame(width: maxWidth, height: 24)
+    .frame(width: maxSliderWidth, height: 24)
     .cornerRadius(35)
+  }
+  
+  private func setOffset(translation: CGFloat) {
+    sliderOffset = translation + lastDragValue
+    let max = maxSliderWidth - 24
+    sliderOffset = sliderOffset > max ? max : sliderOffset
+    sliderOffset = sliderOffset >= 0 ? sliderOffset : 0
+    let progress = sliderOffset / max
+    sliderProgress = progress <= 1 ? progress : 1
   }
 }
 
