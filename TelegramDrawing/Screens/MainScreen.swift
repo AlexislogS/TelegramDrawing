@@ -26,6 +26,7 @@ struct MainScreen: View {
   @State private var sliderOffset: CGFloat = 0
   @State private var selectedBrush = 0
   @State private var isDrawing = false
+  @State private var isSliderDefaultValueSet = false
   
   private let sliderMaxLineWidth: CGFloat = 20
   private let brushes = ["brush", "pen", "pencil"]
@@ -79,7 +80,7 @@ struct MainScreen: View {
                     .resizable()
                     .frame(width: 24, height: 24)
                 }
-                CapsuleSliderView(color: $color, sliderProgress: $sliderProgress, lastDragValue: $lastDragValue, sliderOffset: $sliderOffset)
+                CapsuleSliderView(color: $color, sliderProgress: $sliderProgress, lastDragValue: $lastDragValue, sliderOffset: $sliderOffset, isDefaultValueSet: $isSliderDefaultValueSet)
                   .onChange(of: sliderProgress) { newValue in
                     let lineWidth = max(newValue, 0.01) * sliderMaxLineWidth
                     currentLine.lineWidth = lineWidth

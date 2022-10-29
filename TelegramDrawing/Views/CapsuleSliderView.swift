@@ -24,6 +24,7 @@ struct CapsuleSliderView: View {
   @Binding var sliderProgress: CGFloat
   @Binding var lastDragValue: CGFloat
   @Binding var sliderOffset: CGFloat
+  @Binding var isDefaultValueSet: Bool
   
   private let maxSliderWidth: CGFloat = UIScreen.main.bounds.width * 0.7
 
@@ -50,8 +51,11 @@ struct CapsuleSliderView: View {
               lastDragValue = sliderOffset
             }))
         .onAppear {
-          setOffset(translation: maxSliderWidth * 0.3)
-          lastDragValue = sliderOffset
+          if !isDefaultValueSet {
+            isDefaultValueSet = true
+            setOffset(translation: maxSliderWidth * 0.3)
+            lastDragValue = sliderOffset
+          }
         }
     }
     .frame(width: maxSliderWidth, height: 24)
@@ -70,6 +74,6 @@ struct CapsuleSliderView: View {
 
 struct CapsuleSliderView_Previews: PreviewProvider {
   static var previews: some View {
-    CapsuleSliderView(color: .constant(.cyan), sliderProgress: .constant(0), lastDragValue: .constant(0), sliderOffset: .constant(0))
+    CapsuleSliderView(color: .constant(.cyan), sliderProgress: .constant(0), lastDragValue: .constant(0), sliderOffset: .constant(0), isDefaultValueSet: .constant(false))
   }
 }
