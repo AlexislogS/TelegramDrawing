@@ -27,6 +27,7 @@ struct MainScreen: View {
   @State private var selectedBrush = 0
   @State private var isDrawing = false
   @State private var isSliderDefaultValueSet = false
+  @State private var inputType = 0
   
   private let sliderMaxLineWidth: CGFloat = 20
   private let brushes = ["brush", "pen", "pencil"]
@@ -63,13 +64,13 @@ struct MainScreen: View {
                 isDrawing = false
               })
           )
+          .frame(minHeight: 400)
           if showOpacitySlider {
             VStack {
               BrushView(tip: "tip" + brushes[selectedBrush], base: brushes[selectedBrush])
-                .scaleEffect(0.3)
-                .offset(y: -85)
-                .frame(height: 20)
-                .fixedSize(horizontal: false, vertical: true)
+                .scaleEffect(0.2)
+                .frame(height: 90)
+                .clipped()
               HStack(spacing: 20) {
                 Button {
                   withAnimation(.easeOut) {
@@ -87,25 +88,38 @@ struct MainScreen: View {
                   }
               }
             }
-            .frame(height: 60)
+            .padding(.bottom, 25)
+            .frame(height: 150)
           } else {
-            HStack(spacing: -16) {
-              ColorPicker("", selection: $color)
-                .onChange(of: color) { newValue in
-                  currentLine.color = newValue
-                }
-              ForEach(brushes.indices, id: \.self) { index in
-                BrushView(tip: brushes[index], base: brushes[index])
-                  .scaleEffect(0.4)
-                  .onTapGesture {
-                    selectedBrush = index
-                    withAnimation(.easeIn) {
-                      showOpacitySlider = true
-                    }
+            VStack(spacing: 5) {
+              HStack(spacing: -16) {
+                ColorPicker("", selection: $color)
+                  .onChange(of: color) { newValue in
+                    currentLine.color = newValue
                   }
+                ForEach(brushes.indices, id: \.self) { index in
+                  BrushView(tip: "tip" + brushes[index], base: brushes[index])
+                    .scaleEffect(0.15)
+                    .onTapGesture {
+                      selectedBrush = index
+                      withAnimation(.easeIn) {
+                        showOpacitySlider = true
+                      }
+                    }
+                }
               }
+              .frame(height: 80)
+              Picker("", selection: $inputType) {
+                Text("Draw").tag(0)
+                Text("Text").tag(1)
+              }
+              .foregroundColor(.black)
+              .shadow(radius: 5)
+              .pickerStyle(.segmented)
+              .padding(.horizontal)
             }
-            .frame(height: 60)
+            .padding(.bottom, 25)
+            .frame(height: 150)
           }
         }
         .padding(.bottom)

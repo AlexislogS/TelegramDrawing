@@ -12,6 +12,7 @@ struct TelegramDrawingApp: App {
   var body: some Scene {
     WindowGroup {
       MainScreen()
+        .preferredColorScheme(.dark) 
     }
   }
 }
