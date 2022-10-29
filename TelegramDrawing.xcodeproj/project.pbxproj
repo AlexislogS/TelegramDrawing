@@ -7,18 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EA4E65C5290DA24E00C5015D /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA4E65C4290DA24E00C5015D /* Launch Screen.storyboard */; };
+		EA4E65C7290DA39D00C5015D /* CapsuleSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4E65C6290DA39D00C5015D /* CapsuleSliderView.swift */; };
+		EA4E65C9290DA3FF00C5015D /* ImagePickView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4E65C8290DA3FF00C5015D /* ImagePickView.swift */; };
 		EA6FA296290C845C00632947 /* TelegramDrawingApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA6FA295290C845C00632947 /* TelegramDrawingApp.swift */; };
-		EA6FA298290C845C00632947 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA6FA297290C845C00632947 /* ContentView.swift */; };
+		EA6FA298290C845C00632947 /* MainScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA6FA297290C845C00632947 /* MainScreen.swift */; };
 		EA6FA29A290C845F00632947 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EA6FA299290C845F00632947 /* Assets.xcassets */; };
 		EA6FA29D290C845F00632947 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EA6FA29C290C845F00632947 /* Preview Assets.xcassets */; };
+		EA6FA2A4290C849100632947 /* BrushView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA6FA2A3290C849100632947 /* BrushView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EA4E65C4290DA24E00C5015D /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		EA4E65C6290DA39D00C5015D /* CapsuleSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsuleSliderView.swift; sourceTree = "<group>"; };
+		EA4E65C8290DA3FF00C5015D /* ImagePickView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickView.swift; sourceTree = "<group>"; };
 		EA6FA292290C845C00632947 /* TelegramDrawing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TelegramDrawing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA6FA295290C845C00632947 /* TelegramDrawingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelegramDrawingApp.swift; sourceTree = "<group>"; };
-		EA6FA297290C845C00632947 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		EA6FA297290C845C00632947 /* MainScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreen.swift; sourceTree = "<group>"; };
 		EA6FA299290C845F00632947 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EA6FA29C290C845F00632947 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		EA6FA2A3290C849100632947 /* BrushView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrushView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +40,41 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EA4E65CA290DA46700C5015D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				EA6FA299290C845F00632947 /* Assets.xcassets */,
+				EA4E65C4290DA24E00C5015D /* Launch Screen.storyboard */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		EA4E65CB290DA47A00C5015D /* App */ = {
+			isa = PBXGroup;
+			children = (
+				EA6FA295290C845C00632947 /* TelegramDrawingApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		EA4E65CC290DA4B800C5015D /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				EA6FA297290C845C00632947 /* MainScreen.swift */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		EA4E65CD290DA4C200C5015D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				EA6FA2A3290C849100632947 /* BrushView.swift */,
+				EA4E65C8290DA3FF00C5015D /* ImagePickView.swift */,
+				EA4E65C6290DA39D00C5015D /* CapsuleSliderView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		EA6FA289290C845C00632947 = {
 			isa = PBXGroup;
 			children = (
@@ -51,9 +94,10 @@
 		EA6FA294290C845C00632947 /* TelegramDrawing */ = {
 			isa = PBXGroup;
 			children = (
-				EA6FA295290C845C00632947 /* TelegramDrawingApp.swift */,
-				EA6FA297290C845C00632947 /* ContentView.swift */,
-				EA6FA299290C845F00632947 /* Assets.xcassets */,
+				EA4E65CB290DA47A00C5015D /* App */,
+				EA4E65CC290DA4B800C5015D /* Screens */,
+				EA4E65CD290DA4C200C5015D /* Views */,
+				EA4E65CA290DA46700C5015D /* Resources */,
 				EA6FA29B290C845F00632947 /* Preview Content */,
 			);
 			path = TelegramDrawing;
@@ -125,6 +169,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA4E65C5290DA24E00C5015D /* Launch Screen.storyboard in Resources */,
 				EA6FA29D290C845F00632947 /* Preview Assets.xcassets in Resources */,
 				EA6FA29A290C845F00632947 /* Assets.xcassets in Resources */,
 			);
@@ -137,8 +182,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EA6FA298290C845C00632947 /* ContentView.swift in Sources */,
+				EA6FA298290C845C00632947 /* MainScreen.swift in Sources */,
+				EA4E65C7290DA39D00C5015D /* CapsuleSliderView.swift in Sources */,
 				EA6FA296290C845C00632947 /* TelegramDrawingApp.swift in Sources */,
+				EA6FA2A4290C849100632947 /* BrushView.swift in Sources */,
+				EA4E65C9290DA3FF00C5015D /* ImagePickView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,7 +243,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -249,7 +297,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -273,6 +321,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -302,6 +351,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
