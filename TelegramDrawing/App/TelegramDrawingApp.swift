@@ -12,7 +12,10 @@ struct TelegramDrawingApp: App {
   var body: some Scene {
     WindowGroup {
       MainScreen()
-        .preferredColorScheme(.dark) 
+        .preferredColorScheme(.dark)
+        .onAppear {
+          UITextView.appearance().backgroundColor = .clear
+        }
     }
   }
 }

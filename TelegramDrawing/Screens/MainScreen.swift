@@ -195,9 +195,8 @@ struct MainScreen: View {
           }).simultaneously(with: rotationGesture.simultaneously(with: scaleGesture))
       )
       if !text.isEmpty || inputType == 1 {
-        TextField("Title", text: $text,  axis: .vertical)
+        textEditor
           .foregroundColor(.white)
-          .lineLimit(1...10)
           .focused($isTextFocused)
           .disabled(inputType == 0)
           .padding()
@@ -214,17 +213,25 @@ struct MainScreen: View {
     .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.7)
   }
   
-  private var simpleDrag: some Gesture {
-        DragGesture()
-            .onChanged { value in
-                var newLocation = startLocation ?? location
-                newLocation.x += value.translation.width
-                newLocation.y += value.translation.height
-                self.location = newLocation
-            }.updating($startLocation) { (value, startLocation, transaction) in
-                startLocation = startLocation ?? location
-            }
+  private var textEditor: some View {
+    if #available(iOS 16.0, *) {
+      return TextField("Title", text: $text,  axis: .vertical).lineLimit(1...10)
+    } else {
+      return TextEditor(text: $text).frame(height: 44)
     }
+  }
+  
+  private var simpleDrag: some Gesture {
+    DragGesture()
+      .onChanged { value in
+        var newLocation = startLocation ?? location
+        newLocation.x += value.translation.width
+        newLocation.y += value.translation.height
+        self.location = newLocation
+      }.updating($startLocation) { (value, startLocation, transaction) in
+        startLocation = startLocation ?? location
+      }
+  }
     
   private var fingerDrag: some Gesture {
         DragGesture()
