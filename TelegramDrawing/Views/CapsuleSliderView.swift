@@ -53,7 +53,7 @@ struct CapsuleSliderView: View {
         .onAppear {
           if !isDefaultValueSet {
             isDefaultValueSet = true
-            setOffset(translation: maxSliderWidth * 0.3)
+            setOffset(translation: maxSliderWidth * sliderProgress)
             lastDragValue = sliderOffset
           }
         }

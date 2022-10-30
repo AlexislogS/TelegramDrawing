@@ -36,7 +36,7 @@ struct BrushView: View {
     .onAppear {
       if !isBrushDefaultValueSet {
         isBrushDefaultValueSet = true
-        setOffset(translation: maxBrushHeight * 0.3)
+        setOffset(translation: maxBrushHeight * brushProgress)
       }
     }
     .onChange(of: brushProgress) { newValue in

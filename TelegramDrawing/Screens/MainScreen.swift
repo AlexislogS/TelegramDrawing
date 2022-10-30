@@ -57,7 +57,8 @@ struct MainScreen: View {
                   Image("back")
                     .resizable()
                     .frame(width: 24, height: 24)
-                }
+                    .padding(30)
+                }.padding(-30)
                 CapsuleSliderView(color: $color, sliderProgress: $sliderProgress, lastDragValue: $lastDragValue, sliderOffset: $sliderOffset, isDefaultValueSet: $isSliderDefaultValueSet)
                   .onChange(of: sliderProgress) { newValue in
                     let lineWidth = max(newValue, 0.01) * sliderMaxLineWidth
@@ -65,7 +66,7 @@ struct MainScreen: View {
                   }
               }
             }
-            .padding(.bottom, 25)
+            .padding(.bottom, 50)
             .frame(height: 150)
           } else {
             VStack(spacing: 5) {
@@ -87,22 +88,23 @@ struct MainScreen: View {
                 }
               }
               .frame(height: 80)
-              HStack {
+              .fixedSize()
+              HStack(spacing: 10) {
                 Button {
                   self.image = nil
                 } label: {
                   Image("cancel")
                     .resizable()
                     .frame(width: 24, height: 24)
-                }
+                    .padding(30)
+                }.padding(-30)
                 Picker("", selection: $inputType) {
                   Text("Draw").tag(0)
                   Text("Text").tag(1)
                 }
-                .foregroundColor(.black)
-                .shadow(radius: 5)
                 .pickerStyle(.segmented)
-                .padding(.horizontal)
+                .frame(width: 300, height: 44)
+                .shadow(radius: 5)
                 Button {
                   let image = canvas(image: image).snapshot()
                   UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
@@ -110,7 +112,8 @@ struct MainScreen: View {
                   Image("download")
                     .resizable()
                     .frame(width: 24, height: 24)
-                }
+                    .padding(30)
+                }.padding(-30)
               }
             }
             .padding(.bottom, 25)
