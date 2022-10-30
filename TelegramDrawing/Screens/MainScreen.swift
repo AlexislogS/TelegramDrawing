@@ -28,6 +28,14 @@ struct MainScreen: View {
   @State private var isDrawing = false
   @State private var isSliderDefaultValueSet = false
   @State private var inputType = 0
+  @State private var text = ""
+  @State private var location: CGPoint = .zero
+  @State private var degree = 0.0
+  @State private var scale: CGFloat = 1.0
+  @State private var lastScale: CGFloat = 1.0
+  @FocusState private var isTextFocused: Bool
+  @GestureState private var fingerLocation: CGPoint? = nil
+  @GestureState private var startLocation: CGPoint? = nil
   
   private let sliderMaxLineWidth: CGFloat = 20
   private let brushes = ["brush", "pen", "pencil"]
@@ -36,35 +44,60 @@ struct MainScreen: View {
     if let image = image {
       NavigationView {
         VStack {
-          Canvas { context, size in
-            for line in lines {
-              var path = Path()
-              path.addLines(line.points)
-              context.stroke(path, with: .color(line.color), lineWidth: line.lineWidth)
+          ZStack {
+            Canvas { context, size in
+              for line in lines {
+                var path = Path()
+                path.addLines(line.points)
+                context.stroke(path, with: .color(line.color), lineWidth: line.lineWidth)
+              }
+            }
+            .onAppear {
+              resetText()
+            }
+            .background(Image(uiImage: image)
+              .resizable())
+            .gesture(DragGesture()
+              .onChanged({ value in
+                if inputType == 0 {
+                  let newPoint = value.location
+                  if isDrawing, var lastLine = lines.popLast() {
+                    lastLine.points.append(newPoint)
+                    lines.append(lastLine)
+                    currentLine = lastLine
+                  } else {
+                    isDrawing = true
+                    let lineWidth = max(sliderProgress, 0.01) * sliderMaxLineWidth
+                    currentLine = Line(color: color, lineWidth: lineWidth)
+                    currentLine.points.append(newPoint)
+                    lines.append(currentLine)
+                  }
+                }
+              })
+                .onEnded({ value in
+                  if inputType == 0 {
+                    isDrawing = false
+                  } else {
+                    isTextFocused = true
+                  }
+                }).simultaneously(with: rotationGesture.simultaneously(with: scaleGesture))
+            )
+            .frame(minHeight: 400)
+            if !text.isEmpty || inputType == 1 {
+              TextField("Title", text: $text,  axis: .vertical)
+                .lineLimit(1...10)
+                .focused($isTextFocused)
+                .disabled(inputType == 0)
+                .padding()
+                .background(RoundedRectangle(cornerRadius: 12)
+                  .strokeBorder(style: StrokeStyle(lineWidth: inputType == 0 ? 0 : 4, dash: [10])))
+                .position(location)
+                .scaleEffect(scale)
+                .rotationEffect(Angle.degrees(degree))
+                .gesture(simpleDrag.simultaneously(with: fingerDrag))
+                .padding(.horizontal)
             }
           }
-          .background(Image(uiImage: image)
-            .resizable())
-          .gesture(DragGesture()
-            .onChanged({ value in
-              let newPoint = value.location
-              if isDrawing, var lastLine = lines.popLast() {
-                lastLine.points.append(newPoint)
-                lines.append(lastLine)
-                currentLine = lastLine
-              } else {
-                isDrawing = true
-                let lineWidth = max(sliderProgress, 0.01) * sliderMaxLineWidth
-                currentLine = Line(color: color, lineWidth: lineWidth)
-                currentLine.points.append(newPoint)
-                lines.append(currentLine)
-              }
-            })
-              .onEnded({ value in
-                isDrawing = false
-              })
-          )
-          .frame(minHeight: 400)
           if showOpacitySlider {
             VStack {
               BrushView(tip: "tip" + brushes[selectedBrush], base: brushes[selectedBrush])
@@ -126,21 +159,26 @@ struct MainScreen: View {
         .toolbar {
           ToolbarItem(placement: .navigationBarLeading) {
             Button(action: {
-              lines.removeLast()
+              if inputType == 0 {
+                lines.removeLast()
+              } else {
+                resetText()
+              }
             }, label: {
               Image("undo")
                 .resizable()
                 .frame(width: 24, height: 24)
             })
-            .disabled(lines.isEmpty)
-            .opacity(lines.isEmpty ? 0.5 : 1)
+            .disabled(lines.isEmpty && text.isEmpty)
+            .opacity(lines.isEmpty && text.isEmpty ? 0.5 : 1)
           }
           ToolbarItem(placement: .navigationBarTrailing) {
             Button("Clear All") {
+              resetText()
               lines.removeAll()
             }
-            .disabled(lines.isEmpty)
-            .opacity(lines.isEmpty ? 0.5 : 1)
+            .disabled(lines.isEmpty && text.isEmpty)
+            .opacity(lines.isEmpty && text.isEmpty ? 0.5 : 1)
             .foregroundColor(.white)
           }
         }
@@ -149,6 +187,65 @@ struct MainScreen: View {
     } else {
       ImagePickView(image: $image)
     }
+  }
+  
+  private var simpleDrag: some Gesture {
+        DragGesture()
+            .onChanged { value in
+                var newLocation = startLocation ?? location
+                newLocation.x += value.translation.width
+                newLocation.y += value.translation.height
+                self.location = newLocation
+            }.updating($startLocation) { (value, startLocation, transaction) in
+                startLocation = startLocation ?? location
+            }
+    }
+    
+  private var fingerDrag: some Gesture {
+        DragGesture()
+            .updating($fingerLocation) { (value, fingerLocation, transaction) in
+                fingerLocation = value.location
+            }
+    }
+  
+  private var scaleGesture: some Gesture {
+    MagnificationGesture()
+      .onChanged { val in
+        if inputType == 1 {
+          let delta = val / self.lastScale
+          self.lastScale = val
+          if delta > 0.94 {
+            let newScale = self.scale * delta
+            self.scale = min(max(newScale, 0.4), 1.2)
+          }
+        }
+      }
+      .onEnded { _ in
+        if inputType == 1 {
+          self.lastScale = 1.0
+        }
+      }
+  }
+  
+  private var rotationGesture: some Gesture {
+    RotationGesture()
+      .onChanged({ angle in
+        if inputType == 1 {
+          self.degree = angle.degrees
+        }
+      })
+  }
+  
+  private var defaultLocation: CGPoint {
+    CGPoint(x: UIScreen.main.bounds.width / 2 - 15, y: UIScreen.main.bounds.height / 2 - 100)
+  }
+  
+  private func resetText() {
+    text = ""
+    location = CGPoint(x: UIScreen.main.bounds.width / 2 - 15, y: UIScreen.main.bounds.height / 2 - 100)
+    degree = 0
+    scale = 1
+    lastScale = 1
   }
 }
 
