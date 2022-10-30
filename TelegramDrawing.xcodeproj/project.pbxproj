@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EA0803E6290EDAD8004C5692 /* View+.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0803E5290EDAD8004C5692 /* View+.swift */; };
+		EA0803E9290EDB06004C5692 /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0803E8290EDB06004C5692 /* Line.swift */; };
 		EA4E65C5290DA24E00C5015D /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA4E65C4290DA24E00C5015D /* Launch Screen.storyboard */; };
 		EA4E65C7290DA39D00C5015D /* CapsuleSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4E65C6290DA39D00C5015D /* CapsuleSliderView.swift */; };
 		EA4E65C9290DA3FF00C5015D /* ImagePickView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA4E65C8290DA3FF00C5015D /* ImagePickView.swift */; };
@@ -18,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EA0803E5290EDAD8004C5692 /* View+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+.swift"; sourceTree = "<group>"; };
+		EA0803E8290EDB06004C5692 /* Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		EA4E65C4290DA24E00C5015D /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		EA4E65C6290DA39D00C5015D /* CapsuleSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsuleSliderView.swift; sourceTree = "<group>"; };
 		EA4E65C8290DA3FF00C5015D /* ImagePickView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickView.swift; sourceTree = "<group>"; };
@@ -40,6 +44,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EA0803E7290EDAEE004C5692 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				EA0803E5290EDAD8004C5692 /* View+.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		EA0803EA290EDB17004C5692 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				EA0803E8290EDB06004C5692 /* Line.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		EA4E65CA290DA46700C5015D /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -97,6 +117,8 @@
 				EA4E65CB290DA47A00C5015D /* App */,
 				EA4E65CC290DA4B800C5015D /* Screens */,
 				EA4E65CD290DA4C200C5015D /* Views */,
+				EA0803EA290EDB17004C5692 /* Models */,
+				EA0803E7290EDAEE004C5692 /* Extensions */,
 				EA4E65CA290DA46700C5015D /* Resources */,
 				EA6FA29B290C845F00632947 /* Preview Content */,
 			);
@@ -186,6 +208,8 @@
 				EA4E65C7290DA39D00C5015D /* CapsuleSliderView.swift in Sources */,
 				EA6FA296290C845C00632947 /* TelegramDrawingApp.swift in Sources */,
 				EA6FA2A4290C849100632947 /* BrushView.swift in Sources */,
+				EA0803E6290EDAD8004C5692 /* View+.swift in Sources */,
+				EA0803E9290EDB06004C5692 /* Line.swift in Sources */,
 				EA4E65C9290DA3FF00C5015D /* ImagePickView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

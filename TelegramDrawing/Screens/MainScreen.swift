@@ -7,29 +7,6 @@
 
 import SwiftUI
 
-struct Line {
-  var points = [CGPoint]()
-  var color: Color = .red
-  var lineWidth = 1.0
-}
-
-extension View {
-    func snapshot() -> UIImage {
-      let controller = UIHostingController(rootView: self)
-      let view = controller.view
-      
-      let targetSize = controller.view.intrinsicContentSize
-      view?.bounds = CGRect(origin: .zero, size: targetSize)
-      view?.backgroundColor = .black
-      
-      let renderer = UIGraphicsImageRenderer(size: targetSize)
-      
-      return renderer.image { _ in
-        view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
-      }
-    }
-}
-
 struct MainScreen: View {
   
   @State private var currentLine = Line(color: .cyan)
@@ -40,6 +17,8 @@ struct MainScreen: View {
   @State private var showOpacitySlider = false
   @State private var sliderProgress: CGFloat = 0.3
   @State private var lastDragValue: CGFloat = 0
+  @State private var brushOffset: CGFloat = 0
+  @State private var isBrushDefaultValueSet = false
   @State private var sliderOffset: CGFloat = 0
   @State private var selectedBrush = 0
   @State private var isDrawing = false
@@ -65,7 +44,7 @@ struct MainScreen: View {
           canvas(image: image)
           if showOpacitySlider {
             VStack {
-              BrushView(tip: "tip" + brushes[selectedBrush], base: brushes[selectedBrush])
+              BrushView(tip: "tip" + brushes[selectedBrush], base: brushes[selectedBrush], color: $color, isBrushDefaultValueSet: $isBrushDefaultValueSet, brushProgress: $sliderProgress, brushOffset: $brushOffset)
                 .scaleEffect(0.2)
                 .frame(height: 90)
                 .clipped()
@@ -96,7 +75,8 @@ struct MainScreen: View {
                     currentLine.color = newValue
                   }
                 ForEach(brushes.indices, id: \.self) { index in
-                  BrushView(tip: "tip" + brushes[index], base: brushes[index])
+                  BrushView(tip: "tip" + brushes[index], base: brushes[index],
+                            color: $color, isBrushDefaultValueSet: $isBrushDefaultValueSet, brushProgress: $sliderProgress, brushOffset: $brushOffset)
                     .scaleEffect(0.15)
                     .onTapGesture {
                       selectedBrush = index
@@ -108,6 +88,13 @@ struct MainScreen: View {
               }
               .frame(height: 80)
               HStack {
+                Button {
+                  self.image = nil
+                } label: {
+                  Image("cancel")
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                }
                 Picker("", selection: $inputType) {
                   Text("Draw").tag(0)
                   Text("Text").tag(1)
