@@ -134,7 +134,7 @@ struct MainScreen: View {
         .toolbar {
           ToolbarItem(placement: .navigationBarLeading) {
             Button(action: {
-              if inputType == 0 {
+              if inputType == 0, !lines.isEmpty {
                 lines.removeLast()
               } else {
                 resetText()
@@ -224,7 +224,7 @@ struct MainScreen: View {
           .padding(.horizontal)
       }
     }
-    .frame(minWidth: 300, minHeight: 400)
+    .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height * 0.7)
   }
   
   private var simpleDrag: some Gesture {
