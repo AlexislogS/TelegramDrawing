@@ -13,6 +13,23 @@ struct Line {
   var lineWidth = 1.0
 }
 
+extension View {
+    func snapshot() -> UIImage {
+      let controller = UIHostingController(rootView: self)
+      let view = controller.view
+      
+      let targetSize = controller.view.intrinsicContentSize
+      view?.bounds = CGRect(origin: .zero, size: targetSize)
+      view?.backgroundColor = .black
+      
+      let renderer = UIGraphicsImageRenderer(size: targetSize)
+      
+      return renderer.image { _ in
+        view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+      }
+    }
+}
+
 struct MainScreen: View {
   
   @State private var currentLine = Line(color: .cyan)
@@ -33,6 +50,7 @@ struct MainScreen: View {
   @State private var degree = 0.0
   @State private var scale: CGFloat = 1.0
   @State private var lastScale: CGFloat = 1.0
+  @State private var justLaunched = true
   @FocusState private var isTextFocused: Bool
   @GestureState private var fingerLocation: CGPoint? = nil
   @GestureState private var startLocation: CGPoint? = nil
@@ -44,60 +62,7 @@ struct MainScreen: View {
     if let image = image {
       NavigationView {
         VStack {
-          ZStack {
-            Canvas { context, size in
-              for line in lines {
-                var path = Path()
-                path.addLines(line.points)
-                context.stroke(path, with: .color(line.color), lineWidth: line.lineWidth)
-              }
-            }
-            .onAppear {
-              resetText()
-            }
-            .background(Image(uiImage: image)
-              .resizable())
-            .gesture(DragGesture()
-              .onChanged({ value in
-                if inputType == 0 {
-                  let newPoint = value.location
-                  if isDrawing, var lastLine = lines.popLast() {
-                    lastLine.points.append(newPoint)
-                    lines.append(lastLine)
-                    currentLine = lastLine
-                  } else {
-                    isDrawing = true
-                    let lineWidth = max(sliderProgress, 0.01) * sliderMaxLineWidth
-                    currentLine = Line(color: color, lineWidth: lineWidth)
-                    currentLine.points.append(newPoint)
-                    lines.append(currentLine)
-                  }
-                }
-              })
-                .onEnded({ value in
-                  if inputType == 0 {
-                    isDrawing = false
-                  } else {
-                    isTextFocused = true
-                  }
-                }).simultaneously(with: rotationGesture.simultaneously(with: scaleGesture))
-            )
-            .frame(minHeight: 400)
-            if !text.isEmpty || inputType == 1 {
-              TextField("Title", text: $text,  axis: .vertical)
-                .lineLimit(1...10)
-                .focused($isTextFocused)
-                .disabled(inputType == 0)
-                .padding()
-                .background(RoundedRectangle(cornerRadius: 12)
-                  .strokeBorder(style: StrokeStyle(lineWidth: inputType == 0 ? 0 : 4, dash: [10])))
-                .position(location)
-                .scaleEffect(scale)
-                .rotationEffect(Angle.degrees(degree))
-                .gesture(simpleDrag.simultaneously(with: fingerDrag))
-                .padding(.horizontal)
-            }
-          }
+          canvas(image: image)
           if showOpacitySlider {
             VStack {
               BrushView(tip: "tip" + brushes[selectedBrush], base: brushes[selectedBrush])
@@ -142,14 +107,24 @@ struct MainScreen: View {
                 }
               }
               .frame(height: 80)
-              Picker("", selection: $inputType) {
-                Text("Draw").tag(0)
-                Text("Text").tag(1)
+              HStack {
+                Picker("", selection: $inputType) {
+                  Text("Draw").tag(0)
+                  Text("Text").tag(1)
+                }
+                .foregroundColor(.black)
+                .shadow(radius: 5)
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                Button {
+                  let image = canvas(image: image).snapshot()
+                  UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                } label: {
+                  Image("download")
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                }
               }
-              .foregroundColor(.black)
-              .shadow(radius: 5)
-              .pickerStyle(.segmented)
-              .padding(.horizontal)
             }
             .padding(.bottom, 25)
             .frame(height: 150)
@@ -187,6 +162,69 @@ struct MainScreen: View {
     } else {
       ImagePickView(image: $image)
     }
+  }
+  
+  private func canvas(image: UIImage) -> some View {
+    ZStack {
+      Canvas { context, size in
+        for line in lines {
+          var path = Path()
+          path.addLines(line.points)
+          context.stroke(path, with: .color(line.color), lineWidth: line.lineWidth)
+        }
+      }
+      .onAppear {
+        if justLaunched {
+          justLaunched = false
+          resetText()
+        }
+      }
+      .background(Image(uiImage: image)
+        .resizable()
+        .aspectRatio(contentMode: .fit))
+      .gesture(DragGesture()
+        .onChanged({ value in
+          if inputType == 0 {
+            let newPoint = value.location
+            if isDrawing, var lastLine = lines.popLast() {
+              lastLine.points.append(newPoint)
+              lines.append(lastLine)
+              currentLine = lastLine
+            } else {
+              isDrawing = true
+              let lineWidth = max(sliderProgress, 0.01) * sliderMaxLineWidth
+              currentLine = Line(color: color, lineWidth: lineWidth)
+              currentLine.points.append(newPoint)
+              lines.append(currentLine)
+            }
+          }
+        })
+          .onEnded({ value in
+            if inputType == 0 {
+              isDrawing = false
+            } else {
+              isTextFocused = true
+            }
+          }).simultaneously(with: rotationGesture.simultaneously(with: scaleGesture))
+      )
+      if !text.isEmpty || inputType == 1 {
+        TextField("Title", text: $text,  axis: .vertical)
+          .foregroundColor(.white)
+          .lineLimit(1...10)
+          .focused($isTextFocused)
+          .disabled(inputType == 0)
+          .padding()
+          .background(RoundedRectangle(cornerRadius: 12)
+            .strokeBorder(style: StrokeStyle(lineWidth: inputType == 0 ? 0 : 4, dash: [10]))
+            .foregroundColor(.white))
+          .position(location)
+          .scaleEffect(scale)
+          .rotationEffect(Angle.degrees(degree))
+          .gesture(simpleDrag.simultaneously(with: fingerDrag))
+          .padding(.horizontal)
+      }
+    }
+    .frame(minWidth: 300, minHeight: 400)
   }
   
   private var simpleDrag: some Gesture {
